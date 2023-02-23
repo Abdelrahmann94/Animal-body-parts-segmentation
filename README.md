@@ -55,7 +55,7 @@ from timm.models.resnet import resnet34
 learn = unet_learner(dls, resnet34, metrics=[IoU_f , acc_camvid], self_attention = True, act_cls = Mish, opt_func=opt , loss_func = CrossEntropyLossFlat(weight=weights, axis=1) ).to_fp16()
 
 ```
-## self attention
+## Self Attention
 
 self attention is one of the important techniques that we used for better performance. 
 
