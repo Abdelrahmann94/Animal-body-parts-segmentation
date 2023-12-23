@@ -207,7 +207,6 @@ fig, ax = plt.subplots(1, 1, figsize=(15, 30))
 pipeline = keras_ocr.pipeline.Pipeline()
 # Perform OCR on the image
 prediction_groups = pipeline.recognize([image])
-# Draw bounding boxes on the image
 keras_ocr.tools.drawAnnotations(image=image, predictions=prediction_groups[0], ax=ax)
 ax.set_title('kerasocr results', fontsize=24)
 
