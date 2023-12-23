@@ -162,7 +162,7 @@ text = pytesseract.image_to_string(img)
 ``` 
 But it was a bad option for extracting text from handwritten text images, and this is an example :
 
-![r2](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/p1.png) 
+![r2](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/p1.jpeg) 
 
 ### 2- EasyOCR
 
