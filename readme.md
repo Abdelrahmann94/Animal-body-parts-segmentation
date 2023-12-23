@@ -221,7 +221,7 @@ plt.show()
 I used SIFT Algorithm with the Homography matrix technique to apply seamless image stitching for handwritten text images. Then applied an OCR model using KerasOCR.
 
 ## Comments
-This approach for image stitching doesn't work properly on images that contain big font sizes, and I put an example for this in the evaluation report.
+This approach for image stitching doesn't work properly on images that contain big font sizes, and I put an example of this in the evaluation report.
 
 ## Time Allocation
 
@@ -233,7 +233,7 @@ Developed an algorithm for image stitching (5 hours)
 Tested the image stitching approach and applied an OCR model for the panoramic image (3 hours)
 #### Thursday : 
 Tested the OCR models and chose the one with the best accuracy,
-prepared the evaluation report for the OCR modela and image stitching technique (3 hours)
+prepared the evaluation report for the OCR models and image stitching technique (3 hours)
 #### Saturday :
 prepared a readme file for this task and recorded the video (3 hours)
 
