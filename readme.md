@@ -1,7 +1,7 @@
 
 # Project Overview
 
-Creating panoramic image by stitching handwritten text
+Creating panoramic images by stitching handwritten text
 images using the SIFT algorithm with Homography matrix approach as well as applying an OCR model for extracting text from the panoramic image.
 
 
@@ -30,59 +30,59 @@ The Scale-Invariant Feature Transform (SIFT) algorithm is a computer vision algo
 ![SI](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/readme2.png)
 
 SIFT starts by building a scale-space representation of an image using Gaussian blurring at different scales. This helps in detecting features at different sizes.
-The Difference of Gaussians (DoG) is computed by taking the difference between consecutive blurred images in the scale-space pyramid. When the DoG is found, the SIFT detector searches the DoG over scale and space for local extremas, which can be potential keypoints. Local extrema in the DoG pyramid are identified as potential keypoint locations.
+The Difference of Gaussians (DoG) is computed by taking the difference between consecutive blurred images in the scale-space pyramid. When the DoG is found, the SIFT detector searches the DoG over scale and space for local extremas, which can be potential key points. Local extrema in the DoG pyramid are identified as potential key locations.
 ```bash
 
 descriptor = cv2.SIFT_create()
 (keypoints, features) = descriptor.detectAndCompute(image, None)
 
 ```
-### What is the differnce between key points and descriptors ?
-One important thing to understand is that after extracting the keypoints, you only obtain information about their position, and sometimes their coverage area (usually approximated by a circle or ellipse) in the image. While the information about keypoint position might sometimes be useful, it does not say much about the keypoints themselves.
+### What is the difference between key points and descriptors?
+One important thing to understand is that after extracting the key points, you only obtain information about their position, and sometimes their coverage area (usually approximated by a circle or ellipse) in the image. While the information about key points ' position might sometimes be useful, it does not say much about the key points themselves.
 
-Depending on the algorithm used to extract keypoint (SIFT, Harris corners, MSER), you will know some general characteristics of the extracted keypoints (e.g. they are centered around blobs, edges, prominent corners...) but you will not know how different or similar one keypoint is to the other.
+Depending on the algorithm used to extract key points (SIFT, Harris corners, MSER), you will know some general characteristics of the extracted key points (e.g. they are centered around blobs, edges, prominent corners...) but you will not know how different or similar one key point is to the other.
 
-So, here come descriptors: they are the way to compare the keypoints. They summarize, in vector format (of constant length) some characteristics about the keypoints. For example, it could be their intensity in the direction of their most pronounced orientation. It's assigning a numerical description to the area of the image the keypoint refers to.
+So, here come descriptors: they are the way to compare the key points. They summarize, in vector format (of constant length) some characteristics of the keypoints. For example, it could be their intensity in the direction of their most pronounced orientation. It assigns a numerical description to the area of the image the keypoint refers to.
 
-#### They should be independent of keypoint position
-If the same keypoint is extracted at different positions (e.g. because of translation) the descriptor should be the same.
+#### They should be independent of key points ' position
+If the same key point is extracted at different positions (e.g. because of translation) the descriptor should be the same.
 
 #### They should be robust against image transformations
-Some examples are changes of contrast (e.g. image of the same place during a sunny and cloudy day) and changes of perspective (image of a building from center-right and center-left, we would still like to recognize it as a same building).
+Some examples are changes of contrast (e.g. image of the same place during a sunny and cloudy day) and changes of perspective (image of a building from center-right and center-left, we would still like to recognize it as the same building).
 
 Of course, no descriptor is completely robust against all transformations (nor against any single one if it is strong, e.g. big change in perspective).
 
 Different descriptors are designed to be robust against different transformations which is sometimes opposed to the speed it takes to calculate them.
 
 ### Brute force matcher
-BF Matcher matches the descriptor of a feature from one image with all other features of another image and returns the match based on some distance calculation. So in another words, given 2 sets of features (from image 1 and image 2), each feature from set 1 is compared against all features from set 2. It is slow since it checks match with all the features.
+BF Matcher matches the descriptor of a feature from one image with all other features of another image and returns the match based on some distance calculation. So in another word, given 2 sets of features (from image 1 and image 2), each feature from set 1 is compared against all features from set 2. It is slow since it checks match with all the features.
 
-It is a simple technique to decide which feature in the query image is best matched with that in the train image. This perfect match is elected looking at the smallest distance among those computed among one feature in the train pic and all the features in the query pic.
+It is a simple technique to decide which feature in the query image is best matched with that in the train image. This perfect match is elected by looking at the smallest distance among those computed among one feature in the train pic and all the features in the query pic.
 
-Brute-Force matcher is simple. It takes the descriptor of one feature in first set and is matched with all other features in second set using some distance calculation. And the closest one is returned.
+Brute-Force matcher is simple. It takes the descriptor of one feature in the first set and is matched with all other features in the second set using some distance calculation. And the closest one is returned.
 
-For BF matcher, first we have to create the BFMatcher object using cv2.BFMatcher(). It takes two optional params.
+For BF matcher, first, we have to create the BFMatcher object using cv2.BFMatcher(). It takes two optional parameters.
 
-First one is normType. It specifies the distance measurement to be used. By default, it is cv2.NORM_L2. It is good for SIFT, SURF etc (cv2.NORM_L1 is also there).
+The first one is normType. It specifies the distance measurement to be used. By default, it is cv2.NORM_L2. It is good for SIFT, SURF etc (cv2.NORM_L1 is also there).
 
-For binary string based descriptors like ORB (Oriented FAST and Rotated BRIEF), BRIEF(Binary Robust Independent Elementary Features), BRISK etc, cv2.NORM_HAMMING should be used, which used Hamming distance as measurement. If ORB is using VTA_K == 3 or 4, cv2.NORM_HAMMING2 should be used.
+For binary string-based descriptors like ORB (Oriented FAST and Rotated BRIEF), BRIEF(Binary Robust Independent Elementary Features), BRISK, etc, cv2.NORM_HAMMING should be used, which uses Hamming distance as measurement. If ORB is using VTA_K == 3 or 4, cv2.NORM_HAMMING2 should be used.
 ```bash
 
  bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=crossCheck)
  best_matches = bf.match(features_first_img,features_second_img)
 
 ```
-Two important approaches BFMatcher.match() and BFMatcher.knnMatch(), the first returns the best match, the second method returns k best matches.
-For cases where we want to consider more than one candidate match, we can use a KNN based matching procedure. Instead of returning the single best match for a given feature, KNN returns the k best matches. Note that the value of k has to be pre-defined by the user. As we expect, KNN provides a larger set of candidate features. However, we need to ensure that all these matching pairs are robust before going further.
+Two important approaches BFMatcher.match() and BFMatcher.knnMatch(), the first returns the best match, and the second method returns k best matches.
+For cases where we want to consider more than one candidate match, we can use a KNN-based matching procedure. Instead of returning the single best match for a given feature, KNN returns the k best matches. Note that the value of k has to be pre-defined by the user. As we expect, KNN provides a larger set of candidate features. However, we need to ensure that all these matching pairs are robust before going further.
 
 Which means, instead of a list of matches you get a list of a list of matches.
 
-### Hommography Matrix
+### Homography Matrix
 Homography is a transformation that maps the points in one image to the corresponding point in another image. The homography is a 3×3 matrix :
 
 ![HM](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/readme4.png)
 
-Consider two images of a plane (top of the book) shown in Figure 1. The red dot represents the same physical point in the two images. In computer vision jargon we call these corresponding points. Figure 1. shows four corresponding points in four different colors — red, green, yellow and orange. A Homography is a transformation ( a 3×3 matrix ) that maps the points in one image to the corresponding points in the other image.
+Consider two images of a plane (top of the book) shown in Figure 1. The red dot represents the same physical point in the two images. In computer vision jargon we call these corresponding points. Figure 1. shows four corresponding points in four different colors — red, green, yellow, and orange. A Homography is a transformation ( a 3×3 matrix ) that maps the points in one image to the corresponding points in the other image.
 
 ![HH](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/readme5.png)
 
@@ -96,14 +96,14 @@ To calculate the homography between two images, we must know at least four corre
 ![HL](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/readme7.png)
 
 ### RANSAC algorithm
-RANdom SAmple Consensus or RANSAC is an iterative algorithm to fit linear models. Different from other linear regressors, RANSAC is designed to be robust to outliers. Here, I will use RANSAC to estimate the Homography matrix. Noting Homography is very sensitive to the quality of data we pass to it, hence need an algorithm (RANSAC) that can filter irrelevant points from the data distribution.
+RANdom SAmple Consensus or RANSAC is an iterative algorithm to fit linear models. Different from other linear regressors, RANSAC is designed to be robust to outliers. Here, I will use RANSAC to estimate the Homography matrix. Note that Homography is very sensitive to the quality of data we pass to it, hence need an algorithm (RANSAC) that can filter irrelevant points from the data distribution.
 
 ### RANSAC for Homography
 Repeat N times :
 1- select 4 random pairs of matched features.
 2- Fit Homography.
-3- Compute inliers : apply the transfomration to all features and calculate the error (distance) between matching points after the transformation.
-4- Count number of inliers then select the homographymatrix with the largest number of inliers.
+3- Compute inliers: apply the transformation to all features and calculate the error (distance) between matching points after the transformation.
+4- Count the number of inliers then select the homography matrix with the largest number of inliers.
 
 ```bash
     if len(matches) > 4:
@@ -117,7 +117,7 @@ Repeat N times :
 ```
 
 ## Image warping
-After Homography Matrix calculation, need to warp one of the images to a common plane
+After the Homography Matrix calculation, need to warp one of the images to a common plane
 Finally, we can apply our transformation by calling the cv2.warpPerspective function. The first parameter is our original image that we want to warp, the second is our transformation matrix M (which will be obtained from homography_stitching), and the final parameter is a tuple, used to indicate the width and height of the output image.
 
 ![IW](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/readme8.png)
@@ -197,7 +197,7 @@ plt.imshow( img)
 ![EaL](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/OCR_res7.png)
 
 ### 3- KerasOCR 
-Used KerasOCR and it brought the best accuracy for this task but it needs GPU accelration so, I used Google Coolab.
+Used KerasOCR and it brought the best accuracy for this task but it needs GPU acceleration so, I used Google Colab.
 KerasOCR is a Python package that provides a high-level API for training and using a text detection and recognition pipeline. It is based on the Keras framework and uses the CRAFT text detector and the CRNN recognition model. 
 
 ```bash
@@ -218,7 +218,7 @@ plt.show()
 ![EaL](https://github.com/Abdelrahmann94/Computer-vision-/blob/main/kk.png)
 
 ## Conclusion 
-I used SIFT Algorithm with Homography matrix technique to apply seamless image stitching for handwritten text images. Then applied an OCR model using KerasOCR.
+I used SIFT Algorithm with the Homography matrix technique to apply seamless image stitching for handwritten text images. Then applied an OCR model using KerasOCR.
 
 ## Comments
 This approach for image stitching doesn't work properly on images that contain big font sizes, and I put an example for this in the evaluation report.
@@ -226,15 +226,15 @@ This approach for image stitching doesn't work properly on images that contain b
 ## Time Allocation
 
 #### Monday :
-Recieved the task and did some researches to decide which approach I will use for this task (3 hours)
+Received the task and did some research to decide which approach I would use for this task (3 hours)
 #### Tuesday : 
 Developed an algorithm for image stitching (5 hours)
-#### wednesday :
-Tested the image stitching approach and applyed an OCR model for the panoramic image (3 hours)
+#### Wednesday :
+Tested the image stitching approach and applied an OCR model for the panoramic image (3 hours)
 #### Thursday : 
 Tested the OCR models and chose the one with the best accuracy,
-prepared the evaluation report for OCR model and image stitching technique (3 hours)
-#### saturday :
+prepared the evaluation report for the OCR modela and image stitching technique (3 hours)
+#### Saturday :
 prepared a readme file for this task and recorded the video (3 hours)
 
 
