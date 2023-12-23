@@ -101,8 +101,8 @@ RANdom SAmple Consensus or RANSAC is an iterative algorithm to fit linear models
 ### RANSAC for Homography
 Repeat N times :
 1- select 4 random pairs of matched features.
-2- Fit Homography
-3- Compute inliers : apply the transfomration to all features and calculate the error (distance) between matching points after the transformation
+2- Fit Homography.
+3- Compute inliers : apply the transfomration to all features and calculate the error (distance) between matching points after the transformation.
 4- Count number of inliers then select the homographymatrix with the largest number of inliers.
 
 ```bash
